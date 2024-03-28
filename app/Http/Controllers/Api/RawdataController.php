@@ -165,6 +165,10 @@ class RawdataController extends Controller
             }
         }
 
+        if(!$array) {
+            return response()->json(["message" => "not_content"], 204);
+        }
+
         /* 
             Using the 'Insert Duplicate' feature, we effectively manage and control duplications within our DB table
         */
