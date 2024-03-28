@@ -1,7 +1,7 @@
 
 # Roster System
 
-The Roster System is a Laravel-based application designed to manage and import crew member data. It provides a simple yet powerful interface for interacting with the crew's roster information, including listing all crew members and importing data from an HTML file.
+The Roster System is a Laravel-based (version 10.10) application designed to manage and import crew member data. It provides a simple yet powerful interface for interacting with the crew's roster information, including listing all crew members and importing data from an HTML file.
 
 ## Installation
 

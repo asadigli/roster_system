@@ -14,15 +14,7 @@ use DateTime;
 class RawdataController extends Controller
 {
     
-    /**
-     * @SWG\Get(
-     *     path="/api/rawdatas",
-     *     summary="Get a list of users",
-     *     tags={"Crew data"},
-     *     @SWG\Response(response=200, description="Successful operation"),
-     *     @SWG\Response(response=400, description="Invalid request")
-     * )
-    */
+   
     public function index(Request $request)
     {
         $current_date = "2022-01-14";
@@ -62,22 +54,38 @@ class RawdataController extends Controller
  
 
         if(!$request->hasFile('file')) {
-            return response()->json(['upload_file_not_found'], 400);
+            return response()->json(["message" => "upload_file_not_found"], 400);
         }
-        $file = $request->file('file');
+        $file = $request->file("file");
         if(!$file->isValid()) {
-            return response()->json(['invalid_file_upload'], 400);
+            return response()->json(["message" => "invalid_file_upload"], 400);
         }
         $path = public_path("uploads/files/");
         $file->move($path, $file->getClientOriginalName());
-        $file = $request->file('file');
-        $filename = $file->getClientOriginalName();
+        $file           = $request->file("file");
+        $filename       = $file->getClientOriginalName();
 
-        $extension = $file->getClientOriginalExtension();
-        
-        $html_table_id = $request->post("table_id");
-        $crew_name = $request->post("crew_name");
+        $extension      = $file->getClientOriginalExtension();
+
+        if(!in_array($extension,["html"])) {
+            return response()->json(["message" => "unsupported_file_format"], 400);
+        }
+        $html_table_id  = $request->post("table_id");
+        $crew_name      = $request->post("crew_name");
+
+        if(!$html_table_id) {
+            return response()->json(["message" => "id_attribute_required"], 400);
+        }
+
+        if(!$crew_name) {
+            return response()->json(["message" => "crew_name_required"], 400);
+        }
+
         $array = [];
+
+        /*
+            HTML file parsing
+        */
         if($extension === "html") {
             
             $dom = new Dom;
@@ -133,7 +141,11 @@ class RawdataController extends Controller
                         $sub_array_item = preg_replace('/[^0-9.]+/', '', $sub_array_item) . "-01-2022";
                     }
 
-                    if(in_array($sub_array_key,[
+
+                    /*
+                        We manage to convert number format to time format by putting ":" between
+                    */
+                    if($sub_array_item && str_contains($sub_array_item,":") && in_array($sub_array_key,[
                         "check_in_local",
                         "check_out_local",
                         "check_in_zulu",
@@ -144,7 +156,7 @@ class RawdataController extends Controller
                         "arrival_time_zulu",
                         "flight_time"
                     ])) {
-                        $sub_array_item = $sub_array_item ? substr((string)$sub_array_item, 0, -2) . ":" . substr((string)$sub_array_item, -2) : NULL;
+                        $sub_array_item = substr((string)$sub_array_item, 0, -2) . ":" . substr((string)$sub_array_item, -2);
                     }
                 }
                 $sub_array["token"] = md5($sub_array["date"] . $sub_array["check_in_local"] . $sub_array["crew_fullname"]);
@@ -152,7 +164,11 @@ class RawdataController extends Controller
                 $array[] = $sub_array;
             }
         }
-        $rowdata = DB::table("rawdatas")->upsert(
+
+        /* 
+            Using the 'Insert Duplicate' feature, we effectively manage and control duplications within our DB table
+        */
+        DB::table("rawdatas")->upsert(
             $array,
             ["token"], 
             [
