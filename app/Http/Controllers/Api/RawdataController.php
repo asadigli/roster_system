@@ -14,29 +14,47 @@ use DateTime;
 class RawdataController extends Controller
 {
     
+    /**
+     * @SWG\Get(
+     *     path="/api/rawdatas",
+     *     summary="Get a list of users",
+     *     tags={"Crew data"},
+     *     @SWG\Response(response=200, description="Successful operation"),
+     *     @SWG\Response(response=400, description="Invalid request")
+     * )
+    */
     public function index(Request $request)
     {
-        // $validated = $request->validate([
-        //     'crew'          => ['max:100'],
-        //     'start_date'    => ['date', 'required'],
-        //     'end_date'      => ['date', 'required']
-        // ]);
         $current_date = "2022-01-14";
-        
 
-
-        $crew       = $request->get("crew");
-        $next_week  = "";
+        $from_location  = $request->get("from_location");
+        $crew_name      = $request->get("crew_name");
+        $next_week      = $show_only_standby = "";
         if($request->get("next_week") === "on") {
             $date = new DateTime($current_date);
             $date->modify('next monday');
-            $next_week = $date->format('Y-m-d');
+            $next_week = $date->format('d-m-Y');
         }
 
-        $rowdata = Rawdata::where("crew_fullname",$crew)
-                            ->where("date",">=", $next_week)
-                                ->get();
-        return response()->json($rowdata);
+        if($request->get("show_only_standby") === "on") {
+            $show_only_standby = "SBY";
+        }
+
+        $rowdataQuery = Rawdata::where("crew_fullname",$crew_name);
+        if ($next_week) {
+            $rowdataQuery->where("date",">=", $next_week);
+        }
+        
+        if ($from_location) {
+            $rowdataQuery->where("from_location", $from_location);
+        }
+
+        if ($show_only_standby) {
+            $rowdataQuery->where("activity", $show_only_standby);
+        }
+
+        $rowdata = $rowdataQuery->orderBy('date', 'asc')->get();
+        return response()->json($rowdata, 200);
     }
 
     public function store(Request $request)
@@ -58,11 +76,14 @@ class RawdataController extends Controller
         $extension = $file->getClientOriginalExtension();
         
         $html_table_id = $request->post("table_id");
+        $crew_name = $request->post("crew_name");
         $array = [];
         if($extension === "html") {
             
             $dom = new Dom;
             $dom->loadFromFile(public_path("uploads/files/" . $filename));
+
+            // Removing temp file after parsing data
             unlink(public_path("uploads/files/" . $filename));
             $contents = $dom->find("#" . $html_table_id);
 
@@ -70,10 +91,11 @@ class RawdataController extends Controller
             $prev_date = "";
             foreach($tr_elements as $key => $tr_element) {
                 if(!$key) continue;
+                // Setting date to those which are dateless on table and are between two dates
                 $prev_date = $tr_element->find("td")[1]->innerhtml ?: $prev_date;
                 $sub_array = [
                     "date"                  => $prev_date,
-                    "crew_fullname"         => "",
+                    "crew_fullname"         => $crew_name,
                     "rev_col"               => $tr_element->find("td")[2]->innerhtml,
                     "dc"                    => $tr_element->find("td")[3]->innerhtml,
                     "check_in_local"        => $tr_element->find("td")[4]->innerhtml,
@@ -82,20 +104,20 @@ class RawdataController extends Controller
                     "check_out_zulu"        => $tr_element->find("td")[7]->innerhtml,
                     "activity"              => $tr_element->find("td")[8]->innerhtml,
                     "remark"                => $tr_element->find("td")[9]->innerhtml,
-                    "from_location"         => $tr_element->find("td")[10]->innerhtml,
-                    "to_location"           => $tr_element->find("td")[11]->innerhtml,
+                    "from_location"         => $tr_element->find("td")[11]->innerhtml,
+                    "to_location"           => $tr_element->find("td")[15]->innerhtml,
                     "departure_time_local"  => $tr_element->find("td")[12]->innerhtml,
 
-                    "arrival_time_local"    => $tr_element->find("td")[13]->innerhtml,
-                    "departure_time_zulu"   => $tr_element->find("td")[14]->innerhtml,
-                    "arrival_time_zulu"     => $tr_element->find("td")[15]->innerhtml,
-                    "ac_hotel"              => $tr_element->find("td")[16]->innerhtml,
-                    "blh"                   => $tr_element->find("td")[17]->innerhtml,
-                    "flight_time"           => $tr_element->find("td")[18]->innerhtml,
-                    "night_time"            => $tr_element->find("td")[19]->innerhtml,
-                    "dur"                   => $tr_element->find("td")[20]->innerhtml,
-                    "ext"                   => $tr_element->find("td")[21]->innerhtml,
-                    "pax_booked"            => $tr_element->find("td")[22]->innerhtml
+                    "arrival_time_local"    => $tr_element->find("td")[16]->innerhtml,
+                    "departure_time_zulu"   => $tr_element->find("td")[13]->innerhtml,
+                    "arrival_time_zulu"     => $tr_element->find("td")[17]->innerhtml,
+                    "ac_hotel"              => $tr_element->find("td")[19]->innerhtml,
+                    "blh"                   => $tr_element->find("td")[20]->innerhtml,
+                    "flight_time"           => $tr_element->find("td")[21]->innerhtml,
+                    "night_time"            => $tr_element->find("td")[22]->innerhtml,
+                    "dur"                   => $tr_element->find("td")[23]->innerhtml,
+                    "ext"                   => $tr_element->find("td")[24]->innerhtml,
+                    "pax_booked"            => $tr_element->find("td")[26]->innerhtml
                 ];
 
                 foreach($sub_array as $sub_array_key => &$sub_array_item) {
@@ -122,7 +144,7 @@ class RawdataController extends Controller
                         "arrival_time_zulu",
                         "flight_time"
                     ])) {
-                        $sub_array_item = substr((string)$sub_array_item, 0, -2) . ":" . substr((string)$sub_array_item, -2);
+                        $sub_array_item = $sub_array_item ? substr((string)$sub_array_item, 0, -2) . ":" . substr((string)$sub_array_item, -2) : NULL;
                     }
                 }
                 $sub_array["token"] = md5($sub_array["date"] . $sub_array["check_in_local"] . $sub_array["crew_fullname"]);

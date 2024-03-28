@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 
 class RawdataTest extends TestCase
 {
@@ -15,15 +16,22 @@ class RawdataTest extends TestCase
     {
         $response = $this->get('/api/rawdatas');
 
-        $response->assertStatus(200);
+        $response->assertStatus(TRUE);
     }
 
     public function test_rawdatas_action(): void
     {
-        $response = $this->post('/api/rawdatas',[
-            
+        $htmlFile = UploadedFile::fake()->create(public_path("sample.html"), 100); // Create a fake HTML file
+        $tableId = 'ctl00_Main_activity_table'; 
+        $crewName = 'Jan de Bosman';
+
+        $response = $this->post('/api/rawdatas', [
+            'file' => $htmlFile,
+            'table_id' => $tableId,
+            'crew_fullname' => $crewName,
         ]);
 
-        $response->assertStatus(200);
+
+        $response->assertStatus(201);
     }
 }

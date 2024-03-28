@@ -9,7 +9,7 @@ To install and run the Roster System, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone [repository URL]
+   git clone https://github.com/asadigli/roster_system.git
    ```
 2. Navigate to the project directory:
    ```
