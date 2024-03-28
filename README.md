@@ -1,84 +1,72 @@
 
-Here's the updated README file template tailored to your Roster System API with two endpoints:
+# Roster System
 
-markdown
-Copy code
-# Roster System API
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## Description
-
-The Roster System API is a backend service designed to manage personnel rosters efficiently through a RESTful API interface. It provides endpoints for reading and inserting raw data, enabling integration with various client applications such as web, mobile, or desktop.
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Endpoints](#endpoints)
-- [Contributing](#contributing)
-- [License](#license)
+The Roster System is a Laravel-based application designed to manage and import crew member data. It provides a simple yet powerful interface for interacting with the crew's roster information, including listing all crew members and importing data from an HTML file.
 
 ## Installation
 
-[Include instructions on how to install and set up the Roster System API. This may involve downloading, configuring, and running the API server, as well as any dependencies or prerequisites.]
+To install and run the Roster System, follow these steps:
 
-## Usage
+1. Clone the repository:
+   ```
+   git clone [repository URL]
+   ```
+2. Navigate to the project directory:
+   ```
+   cd Roster-System
+   ```
+3. Install dependencies:
+   ```
+   composer install
+   ```
+4. Create an environment file:
+   ```
+   cp .env.example .env
+   ```
+5. Generate an application key:
+   ```
+   php artisan key:generate
+   ```
+6. Run database migrations:
+   ```
+   php artisan migrate
+   ```
+7. Start the Laravel development server:
+   ```
+   php artisan serve
+   ```
+   
+## API Endpoints
 
-[Provide instructions on how to interact with the Roster System API. Include details on authentication, request formats, response formats, and error handling.]
+The Roster System provides the following API endpoints:
 
-## Endpoints
+### GET /api/rawdatas
 
-### 1. Read Raw Data
+- **Description**: Retrieves flights within a specified date range and optionally filtered by crew name.
+- **Header**: `Content-Type: application/json`
+- **Query Parameters**:
+  - `start_date` (date format): The start date for the filter range.
+  - `end_date` (date format): The end date for the filter range.
+  - `crew_name` (string, optional): The name of the crew to filter the list.
 
-- **GET /api/rawdatas**
-  - Description: Retrieve raw data.
-  - Parameters: [Specify any query parameters if applicable]
-  - Response:
-    ```
-    [
-      {
-        "id": 1,
-        "name": "John Doe",
-        "department": "Engineering",
-        "shift": "Morning"
-      },
-      {
-        "id": 2,
-        "name": "Jane Smith",
-        "department": "Marketing",
-        "shift": "Afternoon"
-      },
-      [Add more sample responses as needed]
-    ]
-    ```
-    
-### 2. Insert Raw Data
+### POST /api/rawdatas
 
-- **POST /api/rawdatas**
-  - Description: Insert raw data.
-  - Body:
-    ```
-    {
-      "name": "New Employee",
-      "department": "Sales",
-      "shift": "Evening"
-    }
-    ```
-  - Response:
-    ```
-    {
-      "id": 3,
-      "name": "New Employee",
-      "department": "Sales",
-      "shift": "Evening"
-    }
-    ```
+- **Description**: Imports data into the database from an HTML file.
+- **Header**: `Content-Type: application/json`
+- **Parameters**:
+  - `file` (file format): The HTML file containing the data to be imported.
+  - `table_id` (string): The identifier for the table where data will be imported.
+  - `crew_fullname` (string): The full name of the crew member associated with the data.
 
-## Contributing
+## Documentation
 
-[Explain how others can contribute to the development of the Roster System API. This may include guidelines for bug reporting, feature requests, or submitting pull requests.]
+The API documentation is available at `/docs`, powered by Swagger. It provides a comprehensive guide to the API's endpoints, including request parameters and response structures.
 
-## License
+## Testing
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+PHPUnit tests have been written to ensure the application's functionality is working as expected. To run the tests, execute the following command:
+
+```
+./vendor/bin/phpunit
+```
+

@@ -9,17 +9,33 @@ use App\Models\Rawdata;
 
 use PHPHtmlParser\Dom;
 use DB;
+use DateTime;
 
 class RawdataController extends Controller
 {
     
     public function index(Request $request)
     {
-        // $validatedData = $request->validateWithBag('post', [
-        //     'crew' => ['required', 'max:100']
+        // $validated = $request->validate([
+        //     'crew'          => ['max:100'],
+        //     'start_date'    => ['date', 'required'],
+        //     'end_date'      => ['date', 'required']
         // ]);
-        $crew = $request->get("crew");
-        $rowdata = Rawdata::select("*")->where("crew_fullname",$crew)->get();
+        $current_date = "2022-01-14";
+        
+
+
+        $crew       = $request->get("crew");
+        $next_week  = "";
+        if($request->get("next_week") === "on") {
+            $date = new DateTime($current_date);
+            $date->modify('next monday');
+            $next_week = $date->format('Y-m-d');
+        }
+
+        $rowdata = Rawdata::where("crew_fullname",$crew)
+                            ->where("date",">=", $next_week)
+                                ->get();
         return response()->json($rowdata);
     }
 

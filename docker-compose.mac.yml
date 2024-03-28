@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .roster-system:/var/www/html
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:latest
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - MYSQL_DATABASE=roster_system
+      - MYSQL_PASSWORD=password2024
+      - MYSQL_ROOT_PASSWORD=password2024
+      - MYSQL_RANDOM_ROOT_PASSWORD=password2024
+
+
