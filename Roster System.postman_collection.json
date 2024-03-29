@@ -1,0 +1,111 @@
+{
+	"info": {
+		"_postman_id": "0c7ab559-6599-4967-ab31-9cf026bfd1ed",
+		"name": "Roster System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32845608"
+	},
+	"item": [
+		{
+			"name": "Read",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1239/api/rawdatas?start_date&end_date&crew_name=Jan de Bosman&show_only_standby=on",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1239",
+					"path": [
+						"api",
+						"rawdatas"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": null
+						},
+						{
+							"key": "end_date",
+							"value": null
+						},
+						{
+							"key": "next_week",
+							"value": "on",
+							"disabled": true
+						},
+						{
+							"key": "from_location",
+							"value": "CPH",
+							"disabled": true
+						},
+						{
+							"key": "crew_name",
+							"value": "Jan de Bosman"
+						},
+						{
+							"key": "show_only_standby",
+							"value": "on"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/azadsadiqli/Downloads/CAE Laravel Assignment/Roster - CrewConnex.html"
+						},
+						{
+							"key": "table_id",
+							"value": "ctl00_Main_activityGrid",
+							"type": "text"
+						},
+						{
+							"key": "crew_name",
+							"value": "Jan de Bosman",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1239/api/rawdatas",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1239",
+					"path": [
+						"api",
+						"rawdatas"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

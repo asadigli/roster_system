@@ -1,0 +1,80 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Roster Crew System",
+        "description": "Timeframes of flights",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/rawdatas": {
+            "get": {
+                "tags": [
+                    "Crew"
+                ],
+                "description": "All flights",
+                "operationId": "8d3ad09ff173329288af407192573fb4",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "path",
+                        "description": "",
+                        "required": false,
+                        "schema": {
+                            "type": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "path",
+                        "description": "",
+                        "required": false,
+                        "schema": {
+                            "type": "date"
+                        }
+                    },
+                    {
+                        "name": "crew_name",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "from_location",
+                        "in": "path",
+                        "description": "",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "show_only_standby",
+                        "in": "path",
+                        "description": "",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "next_week",
+                        "in": "path",
+                        "description": "",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "All flights list"
+                    }
+                }
+            }
+        }
+    }
+}

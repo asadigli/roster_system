@@ -11,10 +11,114 @@ use PHPHtmlParser\Dom;
 use DB;
 use DateTime;
 
+/**
+ * @OA\Info(
+ *      version="1.0.0",
+ *      title="Roster Crew System",
+ *      description="Timeframes of flights",
+ * )
+ * 
+ * @OA\Get(
+ *     path="/api/rawdatas",
+ *     description="All flights",
+ *     tags={"Crew"},
+ *       @OA\Parameter(
+  *         in = "path",
+  *         name="start_date",
+  *         description="",
+  *         required=false,
+  *         @OA\Schema(
+  *             type="date"
+  *         )
+  *     ),
+  *     @OA\Parameter(
+  *         in = "path",
+  *         name="end_date",
+  *         description="",
+  *         required=false,
+  *         @OA\Schema(
+  *             type="date"
+  *         )
+  *     ),
+  *     @OA\Parameter(
+  *         in = "path",
+  *         name="crew_name",
+  *         description="",
+  *         required=true,
+  *         @OA\Schema(
+  *             type="string"
+  *         )
+  *     ),
+  *     @OA\Parameter(
+  *         in = "path",
+  *         name="from_location",
+  *         description="",
+  *         required=false,
+  *         @OA\Schema(
+  *             type="string"
+  *         )
+  *     ),
+  *     @OA\Parameter(
+  *         in = "path",
+  *         name="show_only_standby",
+  *         description="",
+  *         required=false,
+  *         @OA\Schema(
+  *             type="boolean"
+  *         )
+  *     ),
+  *     @OA\Parameter(
+  *         in = "path",
+  *         name="next_week",
+  *         description="",
+  *         required=false,
+  *         @OA\Schema(
+  *             type="boolean"
+  *         )
+  *     ),
+ *     @OA\Response(response="default", description="All flights list")
+ * )
+ * 
+
+
+  */
+
+  
+  /*
+    * @OA\Post(
+  *     path="/api/rawdatas",
+  *     summary="Updating Crew data",
+  *     tags={"Crew"},
+  *     @OA\RequestBody(
+  *        @OA\MediaType(
+  *            mediaType="multipart/form-data",
+  *            @OA\Schema(
+  *                @OA\Property(
+  *                    property="table_id",
+  *                    type="string",
+  *                    required=true,
+  *                ),
+  *                @OA\Property(
+  *                    property="crew_name",
+  *                    type="string",
+  *                    required=true,
+  *                ),
+  *                @OA\Property(
+  *                    property="file",
+  *                    type="file",
+  *                    required=true,
+  *                ),
+  *            ),
+  *        ),
+  *     ),
+  *     @OA\Response(response="404", description="Param validation"),
+  *     @OA\Response(response="201", description="Import created"),
+  * )
+*/
 class RawdataController extends Controller
 {
     
-   
+
     public function index(Request $request)
     {
         $current_date = "2022-01-14";

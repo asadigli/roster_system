@@ -60,7 +60,7 @@ The Roster System provides the following API endpoints:
 
 ## Documentation
 
-The API documentation is available at `/docs`, powered by Swagger. It provides a comprehensive guide to the API's endpoints, including request parameters and response structures.
+The API documentation is available at `/api/documentation`, powered by Swagger. It provides a comprehensive guide to the API's endpoints, including request parameters and response structures.
 
 ## Testing
 
